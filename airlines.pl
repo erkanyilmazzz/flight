@@ -1,20 +1,20 @@
-%	Erkan Yılmaz 					%
-%	161044044						%
-%	CSE341 – Programming Languages 	%
-%	(Fall 2019)Homework #4			%
-%									%
+%   Erkan Yılmaz                    %
+%   161044044                       %
+%   CSE341 – Programming Languages  %
+%   (Fall 2019)Homework #4          %
+%                                   %
 
 
 
-%		PART 1					
-%	
+%       PART 1                  
+%   
 %
 
 
 
 
 
-%				FACTS 				%
+%               FACTS               %
 
 flight(edirne ,edremit).
 flight(edremit,edirne).
@@ -49,16 +49,16 @@ flight(gaziantep,antalya).
 
 
 
-%				RULES				%
+%               RULES               %
 
 route(X,Y):-
-	flight(X,Y).
+    flight(X,Y).
 
 
 route(X,Z):-
-	flight(X,Y),
-	flight(Y,Z),
-	not(Y==Z).%buraya bak%
+    flight(X,Y),
+    flight(Y,Z),
+    not(Y==Z).%buraya bak%
 
 
 
@@ -69,10 +69,10 @@ route(X,Z):-
 
 
 
-%				PART2				%
+%               PART2               %
 
 
-%				FACTS 				%
+%               FACTS               %
 
 distance(istanbul,izmir,328).
 distance(izmir,istanbul,328).
@@ -115,12 +115,39 @@ distance(kars,ankara,872).
 
 
 
-%burayı doldur
 
 
-%				PART3				%
+% a predicate indicating there exist a route between X and Y if there is
+% flight between X and Y
 
-%				FACTS				%
+addList([],L,L).
+addList(Element,L,[Element|L]).
+
+member(X,[X|_]).
+member(X,[_|Tail]):- member(X,Tail).
+
+sroute(A,B,D) :-
+       travel(A,B,[A],P,D),
+       write(P).
+
+travel(A,B,P,[B|P],D) :-
+       %write('travel1'),
+       flight(A,B),
+       distance(A,B,D),!.
+
+travel(A,B,Visited,Path,D) :-
+       %write('travel2'),
+       flight(A,C),
+       C \== B,
+       \+member(C,Visited),
+       distance(A,C,Old),
+       travel(C,B,[C|Visited],Path,D2),
+       D is Old+ D2.
+
+
+%               PART3               %
+
+%               FACTS               %
 
 when(102,10).
 when(108,12).
@@ -144,49 +171,49 @@ enroll(e,455).
 
 
 
-%				RULES				%
+%               RULES               %
 
 
 
-%	RULE THAT SHOW SCHEDULE 		%
-%			FOR A STUDENT 			%
+%   RULE THAT SHOW SCHEDULE         %
+%           FOR A STUDENT           %
 schedule(S,R,T):- enroll(S,L),
-				where(L,R), 
-				when(L,T).
+                where(L,R), 
+                when(L,T).
 
 
 
 
-%	RULE THAT SHOW TIME OF  		%
-%		THE GIVEN LECTURE 			%
+%   RULE THAT SHOW TIME OF          %
+%       THE GIVEN LECTURE           %
 usage(L,T):- where(R,L),
-			 when(R,T).
+             when(R,T).
 
 
-%	RULE THAT CHECK CONFLICT 		%
-%		AS LOOKING TIME 	 			%
+%   RULE THAT CHECK CONFLICT        %
+%       AS LOOKING TIME                 %
 conflictTime(X,Y):-  when(X,T1),
                  when(Y,T2),
                  T1 == T2.
 
 
-%	RULE THAT CHECK CONFLICT 		%
-%		AS LOOKING LOCATION 	 	%
+%   RULE THAT CHECK CONFLICT        %
+%       AS LOOKING LOCATION         %
 conflictClass(X,Y):- where(X,L1),
                 where(Y,L2),
                 L1==L2.
 
 
-%	RULE THAT CHECK CONFLICT 		%
+%   RULE THAT CHECK CONFLICT        %
 conflict(X,Y):- not((not(conflictClass(X,Y)),
                      not(conflictTime(X,Y)))).
 
 
 
-%		DO STUDENTS SEE EACTH 	 	%
-%				IN CLASS 			%
+%       DO STUDENTS SEE EACTH       %
+%               IN CLASS            %
 meet(S1,S2):- enroll(S1,L1),
-			where(L1,R1),
+            where(L1,R1),
             enroll(S2,L2),
             where(L2,R2),
             L1==L2,R1==R2,
@@ -195,23 +222,23 @@ meet(S1,S2):- enroll(S1,L1),
 
 
 
-%				PART4				%
+%               PART4               %
 
-%				RULES				%
+%               RULES               %
 
 
 
-%		RETURNS TRUE if E IS IN S 						%
+%       RETURNS TRUE if E IS IN S                       %
 element(E,S):-member(E,S),!.
 
-%	RETURNS TRUE if Z IS UNION OF X and Y 				%
+%   RETURNS TRUE if Z IS UNION OF X and Y               %
 union(X,Y,Z):-append(X,Y,Z).
 
 
-%	RETURNS TRUE if S3 IS  INTERSECTION OF S1 and S2	%
+%   RETURNS TRUE if S3 IS  INTERSECTION OF S1 and S2    %
 intersect(S1,S2,S3):-intersection(S1,S2,S3).
 
-%	RETURNS TRUE if E1 AND  E2 IS EQUAL  				%
+%   RETURNS TRUE if E1 AND  E2 IS EQUAL                 %
 equivalent(S1,S2):-S1==S2.
 
 
